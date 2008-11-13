@@ -119,8 +119,16 @@ package net.seanhess.components
 			invalidateProperties();
 		}		    
 		
-		
-		
+		/**
+		*	Returns the TextFormat for the currently selected text
+		*/
+		public function get selectedTextFormat():TextFormat
+		{
+			var beginIndex:int = getTextField().selectionBeginIndex;
+			var endIndex:int = getTextField().selectionEndIndex;
+
+			return getSelectionTextFormat(beginIndex, endIndex);   
+		}
 		
 		override protected function commitProperties():void
 		{
@@ -179,10 +187,32 @@ package net.seanhess.components
 		}
 		
 		protected function prepareTextFormat(tf:TextFormat, type:String, value:Object = null):TextFormat
-		{         
+		{      
+			if (type == "url")
+			{
+				tf.target = (value != "") ? "_blank" : "";
+				tf = (value != "") ? addDefaultLinkFormatting(tf) : removeDefaultLinkFormatting(tf);
+			}
+			   
 			if (tf)
 				tf[type] = value;
 				
+			return tf;
+		}
+		
+		protected function addDefaultLinkFormatting(tf:TextFormat):TextFormat
+		{
+			tf.underline = true;
+			tf.color = 0x0000FF;
+			
+			return tf;
+		}
+		
+		protected function removeDefaultLinkFormatting(tf:TextFormat):TextFormat
+		{
+			tf.underline = false;
+			tf.color = 0x000000;
+			
 			return tf;
 		}
               
@@ -229,7 +259,7 @@ package net.seanhess.components
 			lastCaretIndex = getTextField().caretIndex;
 		}
 		
-		protected function getSelectionTextFormat(beginIndex:int, endIndex:int):TextFormat
+		public function getSelectionTextFormat(beginIndex:int, endIndex:int):TextFormat
 		{
 			if (beginIndex == endIndex)
 			{             
