@@ -76,8 +76,8 @@ package net.seanhess.components
 		//----------------------------------
 	    //  text
 	    //----------------------------------
-
-		private var _text:String = "";
+	
+		private var formatDirty:Boolean = false;
 
 		[Bindable("valueCommit")]
 		[CollapseWhiteSpace]
@@ -91,8 +91,8 @@ package net.seanhess.components
 
 		override public function set text(value:String):void
 		{
-			_text = value;
-			textChanged = true;
+			super.text = value;
+			formatDirty = true;
 			invalidateProperties();
 		}
   
@@ -101,8 +101,6 @@ package net.seanhess.components
 	    //----------------------------------
 	    //  htmlText
 	    //----------------------------------
-
-		private var _htmlText:String = "";
 
 		[Bindable("valueCommit")]
 		[CollapseWhiteSpace]
@@ -116,8 +114,8 @@ package net.seanhess.components
 
 		override public function set htmlText(value:String):void
 		{
-			_htmlText = value;
-			htmlTextChanged = true;
+			super.htmlText = value;
+			formatDirty = true;
 			invalidateProperties();
 		}		    
 		
@@ -134,7 +132,7 @@ package net.seanhess.components
 				getTextField().alwaysShowSelection = true;
 			}
 
-			if (textChanged || htmlTextChanged)
+			if (formatDirty)
 			{
 				// Revert previously set TextFormat.
 				var tf:UITextFormat = IUITextField(getTextField()).getUITextFormat();
@@ -142,18 +140,7 @@ package net.seanhess.components
 				// hence has to be explicitly defaulted.
 				tf.bullet = false;
 				getTextField().defaultTextFormat = tf;
-				if (textChanged)
-				{
-					if (_text !== null)
-						super.text = _text;
-					textChanged = false;
-				}
-				else
-				{
-					if (_htmlText !== null)
-						super.htmlText = _htmlText;
-					htmlTextChanged = false;
-				}
+				formatDirty = false;
 			}
 		}
 		
